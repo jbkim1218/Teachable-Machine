@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>손톱 뜯지 마세요!!</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+
+<style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f2f2f2;
+        }
+        h1 {
+            color: #333;
+        }
+        .card {
+            border-radius: 15px;
+            box-shadow: 0px 0px 10px rgba(0,0,0,.15);
+        }
+        .navbar {
+            box-shadow: 0px 2px 5px rgba(0,0,0,.1);
+        }
+</style>
+
+</head>
+
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-light bg-white">
+  <a class="navbar-brand" href="#">감시중!!</a>
+</nav>
+
+<div class="container mt-4">
+
+<h1 class='text-center'>손톱 뜯지 마세요!</h1>
+
+<div class='card mt-4'>
+   <div class='card-header' data-toggle='collapse' data-target='#tip1'>손톱 뜯지 않는 팁!!    (클릭하세요) </div>
+   <div id='tip1' class='collapse'><div class='card-body'><p><strong>1. 자각</strong> 습관을 고치기 위해 먼저 습관을 언제, 어떻게, 왜하는지에 대한 자각을 갖는 것이 중요합니다.<br>
+      언제 손톱을 물어먹는지, 어떤 상황에서 이 습관이 나타나는지 파악하세요.<br><br>
+      <strong>2. 목표 설정</strong>: 손톱을 물어먹는 것을 중단하기 위한 구체적인 목표를 설정하세요.<br>
+      예를 들어, "한 주 동안 손톱을 물어먹지 않겠다"와 같은 목표를 세우세요.<br><br>
+      <strong>3. 대체 행동</strong>: 손톱을 물어먹는 대신 다른 행동을 찾으세요.<br>
+      예를 들어, 스트레스가 쌓였을 때 스트레스 공감행동을 시도하거나 손톱을 다른 방식으로 다듬어 보세요.<br><br>
+      <strong>4. 경각심</strong>: 손톱을 물어먹는 것이 어떤 피해를 일으킬 수 있는지, 피부 감염이나 손톱 손상 등의 위험성을 이해하고, 이를 경각심에 대한 동기로 활용하세요.<br><br>
+      <strong>5. 자기감시</strong>: 주기적으로 손톱 상태를 확인하고 개선된 부분을 지켜보세요.<br>
+      손톱이 자랄 때마다 얼마나 길어졌는지 관찰하며 개선을 확인하고 보상을 설정하세요.<br><br>
+      <strong>6. 스트레스 관리</strong>: 습관을 바꾸는 데 도움이 될 수 있는 스트레스 관리 기술을 배우세요.<br>
+      명상, 규칙적인 운동, 딥 브레스, 혹은 스트레스 상황에서 더 건강한 대안을 찾는 것이 중요합니다.<br><br>
+      <strong>7. 보상 시스템</strong>: 손톱을 물어먹지 않은 기간 동안 자신에게 보상을 제공하세요.<br>
+      이것은 동기부여를 높일 수 있습니다.<br><br>
+      <strong>8. 실천 계획</strong>: 어떤 상황에서 손톱을 물어먹는지 파악하고, 그런 상황에서 대체 행동을 실천할 계획을 세워보세요.<br><br>
+      <strong>9. 전문가의 도움</strong>: 만약 이 습관이 지나치게 심각하거나 관리하기 어렵다면, 정신건강 전문가나 상담사의 도움을 받는 것을 고려하세요.</p></div></div>
+ </div>
+
+ <audio id="sound" src="Sound_긴장공포.mp3"></audio>
+ <div style="visibility: hidden; position: absolute;" id="webcam-container"></div>
+ 
+ 
+ <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest/dist/tf.min.js"></script>
+ <script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@latest/dist/teachablemachine-image.min.js"></script>
+ <script type="text/javascript">
+     const URL = "https://teachablemachine.withgoogle.com/models/8q7zI7AHP/";
+ 
+     let model, webcam, labelContainer, maxPredictions;
+     async function init() {
+         const modelURL = URL + "model.json";
+         const metadataURL = URL + "metadata.json";
+ 
+
+         model = await tmImage.load(modelURL, metadataURL);
+         maxPredictions = model.getTotalClasses();
+ 
+
+         const flip = true; 
+         webcam = new tmImage.Webcam(200, 200, flip); 
+         await webcam.setup(); 
+         await webcam.play();
+         
+         window.requestAnimationFrame(loop);
+ 
+         document.getElementById("webcam-container").appendChild(webcam.canvas);
+         
+    }
+ 
+    async function loop() {
+        webcam.update(); 
+        await predict();
+        window.requestAnimationFrame(loop);
+    }
+ 
+    async function predict() {
+        const prediction = await model.predict(webcam.canvas);
+ 
+        var soundElement = document.getElementById('sound');
+        
+        if(prediction[0].probability > 0.8){
+            console.log('손톱무는중');
+            document.body.style.backgroundColor = "red";
+ 
+            soundElement.play();
+ 
+        } else{
+            console.log('정상자세');
+            document.body.style.backgroundColor = "white";
+            
+            soundElement.pause();
+            soundElement.currentTime=0;
+            
+        }
+    }
+ 
+    init();
+ 
+ </script>
+
+
+</body>
+</html>
+
